@@ -1,0 +1,30 @@
+body {
+    text-align: center;
+}
+
+.info_wrap {
+    margin-bottom: 50px;
+}
+
+
+.card_wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+
+.card_img {
+    width: 300px;
+    height: 300px;
+}
+
+.card_title {
+    font-size: 20px;
+}
+
+.card_btn {
+    width: 120px;
+    height: 28px;
+    font-size: 20px;
+    line-height: 20px;
+}
