@@ -1,12 +1,12 @@
 const fs = require('fs');
 const main_view = fs.readFileSync('./main.html', 'utf-8');
+const orderlist_view = fs.readFileSync('./orderlist.html', 'utf-8');
 
 const mariadb = require('./database/connect/mariadb');
 
-function main(response) {
-    console.log('main');
 
-    mariadb.query("SELECT * FROM product", function(err, rows) {
+function main(response) {
+    mariadb.query("SELECT * FROM product;", function(err, rows) {
         console.log(rows);
     });
 
@@ -15,6 +15,25 @@ function main(response) {
     response.end();
 
 }
+
+function orderList(response) {
+    response.writeHead(200, {'Content-Type' : 'text/html'});
+
+    mariadb.query("SELECT * FROM orderlist;", function(err, rows) {
+    response.write(orderlist_view);
+
+        rows.forEach((el) => {
+            response.write("<tr>" 
+                +"<td>"+ el.product_id +"</td>"
+                +"<td>"+ el.order_date +"</td>"
+            +"</tr>")
+        })
+
+        response.write('</table>');
+        response.end();
+    });
+}
+
 
 function styleMain(response) {
     fs.readFile('./main.css', function(err, data) {
@@ -46,8 +65,26 @@ function blackRacket(response) {
     })
 }
 
+function order(response, productId) {
+    response.writeHead(200, {'Content-Type' : 'text/html'});
+
+    mariadb.query("INSERT INTO orderlist VALUES("+ productId +", '"+ new Date().toLocaleDateString() +"')", 
+    function(err, data) {
+        if(err) {
+            console.log(err);
+        }
+        console.log(data);
+    })
+
+    response.write('order page');
+    response.end();
+}
+
+
 let handle = {}; // key : value 
 handle['/'] = main;
+handle['/order'] = order;
+handle['/orderlist'] = orderList;
 
 // css 적용
 handle['/main.css'] = styleMain;
